@@ -7,7 +7,7 @@ import time
 import pathlib
 import datetime
 
-Path = './Temp_Humidi_Sensor_Data.txt'
+Path = './Temp_Humidi_Sensor_Data.json'
 ###ファイルがなかったら作成
 if not os.path.exists(Path):
     print("True")
