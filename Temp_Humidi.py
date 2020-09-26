@@ -35,7 +35,7 @@ while 1:
     temperature = str('{:.4g}'.format(tempChanger(  data[0], data[1] )))
     humidity = str('{:.4g}'.format(tempChanger(  data[3], data[4] )))
     with open(Path, 'a') as f:
-        print(temperature + 'C')
+        print(temperature + '℃')
         print(humidity + '%')
         time_now = datetime.datetime.now()
         time_str = time_now.strftime("%Y/%m/%d %H:%M:%S")
