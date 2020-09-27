@@ -7,6 +7,7 @@ import time
 import pathlib
 import datetime
 
+print ('[' + datetime.datetime.now().strftime('%Y%m%d %H:%M:%S') + '] start')
 Path = './Temp_Humidi_Sensor_Data.json'
 ###ファイルがなかったら作成
 if not os.path.exists(Path):
@@ -30,6 +31,7 @@ i2c.write_byte_data( i2c_addr, 0x21, 0x30)
 time.sleep(0.5)
 
 while 1:
+    print ('[' + datetime.datetime.now().strftime('%Y%m%d %H:%M:%S') + '] センサデータ取得')
     i2c.write_byte_data( i2c_addr, 0xe0, 0x00 )
     data = i2c.read_i2c_block_data( i2c_addr, 0x00, 6 )
     temperature = str('{:.4g}'.format(tempChanger(  data[0], data[1] )))
@@ -43,5 +45,7 @@ while 1:
         f.write('"temperature"' + ': "' + temperature + '",')
         f.write('"humidity"' + ': "' + humidity + '"}\n')
     ###30分待つ
+    print ('[' + datetime.datetime.now().strftime('%Y%m%d %H:%M:%S') + '] 30m待機')
     time.sleep(1800)
+    print ('[' + datetime.datetime.now().strftime('%Y%m%d %H:%M:%S') + '] 30m待機終了')
 
