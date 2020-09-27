@@ -71,4 +71,5 @@ Temporary Items
 
 # Directory generated at build time
 build/
+__pycache__/
 
