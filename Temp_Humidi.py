@@ -43,5 +43,5 @@ while 1:
         f.write('"temperature"' + ': "' + temperature + '",')
         f.write('"humidity"' + ': "' + humidity + '"}\n')
     ###30分待つ
-    time.sleep(1800000)
+    time.sleep(1800)
 
