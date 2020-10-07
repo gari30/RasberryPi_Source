@@ -8,7 +8,8 @@ import pathlib
 import datetime
 
 #print ('[' + datetime.datetime.now().strftime('%Y%m%d %H:%M:%S') + '] start')
-Path = './Temp_Humidi_Sensor_Data.json'
+now_month = datetime.datetime.now().strftime('%Y%m')
+Path = './' + now_month + '_Temp_Humidi_Sensor_Data.json'
 ###ファイルがなかったら作成
 if not os.path.exists(Path):
     print("True")
