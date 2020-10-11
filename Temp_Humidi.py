@@ -32,8 +32,8 @@ time.sleep(0.5)
 
 i2c.write_byte_data( i2c_addr, 0xe0, 0x00 )
 data = i2c.read_i2c_block_data( i2c_addr, 0x00, 6 )
-temperature = str('{:.4g}'.format(tempChanger(  data[0], data[1] )))
-humidity = str('{:.4g}'.format(tempChanger(  data[3], data[4] )))
+temperature = str('{:.02f}'.format(tempChanger(  data[0], data[1] )))
+humidity = str('{:.02f}'.format(humidChanger(  data[3], data[4] )))
 with open(Path, 'a') as f:
     print(temperature + '℃')
     print(humidity + '%')
