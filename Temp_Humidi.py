@@ -7,7 +7,8 @@ import time
 import pathlib
 import datetime
 
-Path = './Temp_Humidi_Sensor_Data.json'
+now_month = datetime.datetime.now().strftime('%Y%m')
+Path = './' + now_month + '_Temp_Humidi_Sensor_Data.json'
 ###ファイルがなかったら作成
 if not os.path.exists(Path):
     print("True")
@@ -29,25 +30,16 @@ i2c_addr = 0x45
 i2c.write_byte_data( i2c_addr, 0x21, 0x30)
 time.sleep(0.5)
 
-while 1:
-    i2c.write_byte_data( i2c_addr, 0xe0, 0x00 )
-    data = i2c.read_i2c_block_data( i2c_addr, 0x00, 6 )
-    temperature = str('{:.4g}'.format(tempChanger(  data[0], data[1] )))
-    humidity = str('{:.4g}'.format(tempChanger(  data[3], data[4] )))
-    with open(Path, 'a') as f:
-        print(temperature + 'C')
-        print(humidity + '%')
-        time_now = datetime.datetime.now()
-        time_str = time_now.strftime("%Y/%m/%d %H:%M:%S")
-        f.write('{"time"' + ': "' + time_str + '",')
-        f.write('"temperature"' + ': "' + temperature + '",')
-        f.write('"humidity"' + ': "' + humidity + '"}\n')
-    ###30分待つ
-    time.sleep(1800000)
-
-
-
-
-
-
+i2c.write_byte_data( i2c_addr, 0xe0, 0x00 )
+data = i2c.read_i2c_block_data( i2c_addr, 0x00, 6 )
+temperature = str('{:.02f}'.format(tempChanger(  data[0], data[1] )))
+humidity = str('{:.02f}'.format(humidChanger(  data[3], data[4] )))
+with open(Path, 'a') as f:
+    print(temperature + '℃')
+    print(humidity + '%')
+    time_now = datetime.datetime.now()
+    time_str = time_now.strftime("%Y/%m/%d %H:%M:%S")
+    f.write('{"time"' + ': "' + time_str + '",')
+    f.write('"temperature"' + ': "' + temperature + '",')
+    f.write('"humidity"' + ': "' + humidity + '"}\n')
 
