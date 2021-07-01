@@ -65,4 +65,4 @@ with open(Path, 'a') as f:
   f.write('{"time"' + ': "' + time_str + '",')
   f.write('"temperature"' + ': "' + temperature_str + '",')
   f.write('"humidity"' + ': "' + humidity_str + '"}\n')
-  pushDataFirestore(time_now.timestamp(), temperature, humidity, 0)
+  pushDataFirestore(int(time_now.timestamp()), temperature, humidity, 0)
