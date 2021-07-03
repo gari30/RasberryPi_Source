@@ -73,4 +73,5 @@ Temporary Items
 build/
 __pycache__/
 *firestore.json
+dist/
 
