@@ -71,7 +71,7 @@ def getCo2Concentration():
     print("checksum error.")
     return -1
 
-  return co2_data[2] * 256 + data[3]
+  return co2_data[2] * 256 + co2_data[3]
 
 # シリアルデバイスの設定
 co2_serial = serial.Serial("/dev/ttyAMA0", baudrate=9600, timeout=0.1)
