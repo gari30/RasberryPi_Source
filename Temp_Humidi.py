@@ -38,6 +38,14 @@ def humidChanger( msb, lsb):
   mlsb = ((msb << 8) | lsb)
   return ( 100 * int( str( mlsb ), 10) / (pow( 2, 16 ) - 1 ))
 
+# CO2センサキャリブレーション
+def setCo2Calibration():
+  # MH-Z14Bにキャリブレーションコマンドを送信
+  co2_serial.write(bytes([0xFF, 0x01, 0x87, 0x00, 0x00, 0x00, 0x00, 0x00, 0x78]))
+  print("co2 sensor calibration.")
+  co2_serial.reset_input_buffer()
+  return
+
 # CO2濃度取得
 def getCo2Concentration():
   # MH-Z14Bにコマンド送信、レスポンス受信
@@ -65,6 +73,16 @@ def getCo2Concentration():
 
   return co2_data[2] * 256 + data[3]
 
+# シリアルデバイスの設定
+co2_serial = serial.Serial("/dev/ttyAMA0", baudrate=9600, timeout=0.1)
+
+if 1 < len(sys.argv):
+  arg_data = sys.argv[1]
+  if arg_data == 'co2_init':
+    # co2濃度センサのキャリブレーション
+    setCo2Calibration()
+    sys.exit()
+
 now_month = datetime.datetime.now().strftime('%Y%m')
 Path = './' + now_month + '_Temp_Humidi_Sensor_Data.json'
 # ファイルがなかったら作成
@@ -75,7 +93,6 @@ if not os.path.exists(Path):
 
 i2c = smbus.SMBus(1)
 i2c_addr = 0x45
-co2_serial = serial.Serial("/dev/ttyAMA0", baudrate=9600, timeout=0.1)
 
 i2c.write_byte_data( i2c_addr, 0x21, 0x30)
 time.sleep(0.5)
