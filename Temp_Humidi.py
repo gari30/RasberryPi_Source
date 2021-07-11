@@ -12,16 +12,17 @@ from firebase_admin import credentials
 from firebase_admin import firestore
 
 # firestoreにデータを上げる
+# param collection_name: push先のコレクション名(String)
 # param date: 日付データ(数値)
 # param temperature: 温度データ(数値)
 # param humidity: 湿度データ(数値)
 # param co2_concentration: CO2濃度(数値)
-def pushDataFirestore(date, temperature, humidity, co2_concentration):
+def pushDataFirestore(collection_name, date, temperature, humidity, co2_concentration):
   cred = credentials.Certificate('./kyokko-ob-team_firestore.json')
   firebase_admin.initialize_app(cred)
   db = firestore.client()
 
-  store_document = db.collection('sensor-data_test-env').document(str(date))
+  store_document = db.collection(collection_name).document(str(date))
   store_document.set({
     'temperature': temperature,
     'humidity': humidity,
@@ -42,7 +43,6 @@ def humidChanger( msb, lsb):
 def setCo2Calibration():
   # MH-Z14Bにキャリブレーションコマンドを送信
   co2_serial.write(bytes([0xFF, 0x01, 0x87, 0x00, 0x00, 0x00, 0x00, 0x00, 0x78]))
-  print("co2 sensor calibration.")
   co2_serial.reset_input_buffer()
   return
 
@@ -76,12 +76,24 @@ def getCo2Concentration():
 # シリアルデバイスの設定
 co2_serial = serial.Serial("/dev/ttyAMA0", baudrate=9600, timeout=0.1)
 
-if 1 < len(sys.argv):
+is_firestore_enable = False
+firestore_collection_name = ""
+
+if 1 <= len(sys.argv):
   arg_data = sys.argv[1]
   if arg_data == 'co2_init':
     # co2濃度センサのキャリブレーション
-    setCo2Calibration()
+    print("co2 sensor calibration.")
+    #setCo2Calibration()
     sys.exit()
+
+  elif arg_data == '--firestore':
+    # firestoreのpush先あり
+    is_firestore_enable = True
+
+    if 2 <= len(sys.argv):
+      firestore_collection_name = sys.argv[2]
+      print("push to " + firestore_collection_name)
 
 now_month = datetime.datetime.now().strftime('%Y%m')
 Path = './' + now_month + '_Temp_Humidi_Sensor_Data.json'
@@ -125,4 +137,8 @@ with open(Path, 'a') as f:
   f.write('"temperature"' + ': "' + temperature_str + '",')
   f.write('"humidity"' + ': "' + humidity_str + '",')
   f.write('"co2_concentration"' + ': "' + co2_conc_str + '"}\n')
-  pushDataFirestore(int(time_now.timestamp()), temperature, humidity, co2_conc)
+
+  # firebaseのpush先が指定されている場合はpushする
+  if is_firestore_enable == True:
+    pushDataFirestore(firestore_collection_name, int(time_now.timestamp()), temperature, humidity, co2_conc)
+
